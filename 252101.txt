@@ -1,0 +1,256 @@
+2. OPIS ZAWODU
+2.1. Synteza zawodu
+Administrator baz danych1
+zarządza bazami danych. W tym zakresie nadzoruje użytkowników,
+zapewnia dostępność, wydajne działanie oraz bezpieczeństwo przetwarzania i przechowywania
+informacji w bazach danych. Wspiera również i inicjuje działania związane z rozwojem baz danych.
+2.2. Opis pracy i sposobu jej wykonywania
+Opis pracy
+Administrator baz danych monitoruje pracę baz danych oraz jest odpowiedzialny za optymalizację
+ich działania. Organizuje i kontroluje dostęp użytkowników do baz, wspiera użytkowników
+korzystających z baz danych. Wskazuje i inicjuje działania mające na celu wydajne korzystanie
+z informacji zgromadzonych w bazach danych. Definiuje i wdraża procedury mające na celu
+zabezpieczenie baz danych przed uszkodzeniem lub dostępem do informacji przez osoby
+niepowołane. W przypadku uszkodzenia baz danych ma za zadanie odzyskać utracone dane
+i przywrócić je do działania w czasie zgodnym z obowiązują umową serwisową.
+Sposoby wykonywania pracy
+Administrator baz danych w trakcie wykonywania pracy wykonuje szereg czynności, m.in.:
+ zapoznaje się z dokumentacją baz danych wykorzystywanych w firmie,
+ tworzy, instaluje i konfiguruje bazy danych,
+ przygotowuje oraz realizuje procedury aktualizacji baz danych,
+ zarządza poprawkami, aktualizacjami, wersjami baz danych i pilnuje ich kompatybilności
+z obsługiwanymi systemami i aplikacjami,
+ definiuje użytkowników oraz ich uprawnienia w bazach danych,
+ monitoruje poprawność działania baz danych,
+ monitoruje pojemność baz danych,
+ sprawdza wydajność27
+baz danych,
+ optymalizuje działanie baz danych,
+ analizuje środowisko informatyczne, w którym działają bazy danych w celu wykrycia zagrożeń
+związanych z nieuprawnionym dostępem do baz danych, brakiem dostępu do zasobów
+dyskowych, mocy obliczeniowej procesorów, pamięci operacyjnej,
+ identyfikuje zagrożenia, zapobiega awariom w działaniu baz danych,
+ konserwuje bazy danych,
+ przygotowuje strategie archiwizacji baz danych18
+,
+ tworzy kopie zapasowe baz danych,
+ przywraca bazy danych z kopii zapasowych,
+ tworzy dokumentację dla działających w firmie baz danych,
+INFORMACJA O ZAWODZIE – Administrator baz danych 252101
+5
+ konfiguruje oprogramowanie do obsługi i kontrolowania poprawności działania baz danych
+oraz systemów informatycznych,
+ rekomenduje wymagania systemowe oraz sprzętowe dla potrzeb baz danych,
+ współuczestniczy w analizie kompatybilności baz danych z wykorzystującymi je systemami,
+aplikacjami.
+Więcej szczegółowych informacji znajduje się w sekcjach: 3.1. Zadania zawodowe oraz 3.2, 3.3 i 3.4.
+Kompetencje zawodowe.
+2.3. Środowisko pracy (warunki pracy, maszyny i narzędzia pracy, zagrożenia, organizacja
+pracy)
+Warunki pracy
+Administrator baz danych pracuje w pomieszczeniu biurowym, które może mieć charakter:
+ przestrzeni otwartej, tzw. open space9
+,
+ jedno- lub kilkuosobowych pokoi, gabinetów.
+Są to zazwyczaj pomieszczenia klimatyzowane, ze sztucznym oświetleniem. Możliwe jest także
+wykonywanie pracy poza siedzibą pracodawcy, np. w domu, u klienta. Praca realizowana jest w pozycji
+siedzącej.
+Więcej informacji znajduje się w sekcji: 4.1. Możliwości podjęcia pracy w zawodzie.
+Wykorzystywane maszyny i narzędzia pracy
+Administrator baz danych w działalności zawodowej wykorzystuje m.in.:
+ stanowisko komputerowe z dostępem do sieci przedsiębiorstwa i internetu,
+ oprogramowanie umożliwiające zarządzanie bazami danych oraz wykonywanie zapytań do baz
+danych29
+,
+ oprogramowanie do monitorowania baz danych,
+ oprogramowanie do monitorowania systemu operacyjnego,
+ oprogramowanie wspomagające administratora w realizacji zadań związanych z optymalizacją
+baz danych10
+,
+ oprogramowanie biurowe.
+Organizacja pracy
+Praca administratora baz danych, zależnie od organizacji, może odbywać się w stałych godzinach pracy
+w dni robocze lub w systemie zmianowym, także w niedzielę i w dni świąteczne. W sytuacjach
+awaryjnych od administratora wymaga się dyspozycyjności i wydłużonego czasu pracy. Może być także
+zobligowany do pełnienia dyżuru telefonicznego. Praca administratora z reguły ma charakter
+stacjonarny, może być wykonywana zdalnie.
+Praca administratora baz danych ma charakter indywidualny i nie jest rutynowa. Administrator musi
+reagować na zaistniałą w danym momencie sytuację – działa często w sytuacjach problemowych, pod
+presją przełożonych. Ponosi odpowiedzialność i ryzyko wynikające z podejmowanych decyzji i działań.
+Administrator kontaktuje się bezpośrednio z osobami nadzorującymi jego pracę, innymi
+administratorami lub użytkownikami przetwarzającymi administrowane dane.
+Realizując zadania związane z administracją bazami danych, współpracuje z:
+ projektantami, analitykami baz danych,
+ administratorami systemów operacyjnych,
+ administratorami macierzy dyskowych6
+,
+ administratorami sieci,
+INFORMACJA O ZAWODZIE – Administrator baz danych 252101
+6
+ administratorami aplikacji,
+ inspektorami ochrony danych (IOD),
+ programistami aplikacji,
+ testerami oprogramowania komputerowego wykorzystującego bazy danych.
+Zagrożenia mające wpływ na bezpieczeństwo pracy człowieka
+Osoba pracująca jako administrator baz danych narażona jest na typowe choroby występujące
+w zawodzie związane z pracą w pozycji siedzącej oraz pod presją czasu, takie jak:
+ przeciążenia układu mięśniowo-kostnego z powodu wymuszonej pozycji ciała podczas
+długotrwałej pracy przy komputerze, mogące powodować:
+ zmiany zwyrodnieniowe kręgosłupa,
+ wady postawy,
+ zmiany w układzie kostno-stawowym nadgarstka,
+ otyłość lub nadwaga wynikające z siedzącego trybu pracy,
+ przeciążenia narządu wzroku spowodowane intensywną i długotrwałą pracą przy komputerze, złe
+lub niewłaściwe sztuczne oświetlenie pomieszczeń, mogące powodować:
+ osłabienie wzroku,
+ ból, łzawienie oczu,
+ obciążenia nerwowo-psychiczne spowodowane pracą pod presją czasu i przełożonych,
+koniecznością szybkiego podejmowania odpowiedzialnych decyzji, mogące powodować:
+ stres,
+ nerwicę,
+ depresję,
+ choroby układu krążenia – stres oraz brak ruchu mogą prowadzić do zatoru tętnic lub zakrzepicy
+żył głębokich nóg.
+2.4. Wymagania psychofizyczne i zdrowotne
+Wymagania psychofizyczne
+Dla pracownika wykonującego zawód administrator baz danych ważne są:
+w kategorii wymagań fizycznych
+ sprawność układu kostno-stawowego,
+ sprawność narządu wzroku,
+ sprawność układu krążenia,
+ sprawność układu mięśniowego;
+w kategorii sprawności sensomotorycznych
+ rozróżnianie barw,
+ ostrość wzroku,
+ zręczność rąk i palców,
+ spostrzegawczość,
+ koordynacja wzrokowo-ruchowa;
+w kategorii sprawności i zdolności
+ koncentracja uwagi,
+ podzielność uwagi,
+ dobra pamięć,
+ uzdolnienia techniczne,
+ uzdolnienia organizacyjne,
+ rozumowanie logiczne,
+ zdolność podejmowania szybkich i trafnych decyzji,
+INFORMACJA O ZAWODZIE – Administrator baz danych 252101
+7
+ zdolność motywowania siebie,
+ zdolność analizowania i systematyzowania złożonych problemów,
+ zdolność analizowania sytuacji i podejmowania ryzyka,
+ zdolność do przestrzegania reguł, przepisów i standardów,
+ współdziałanie i współpraca w zespole (grupie);
+w kategorii cech osobowościowych
+ gotowość do pracy w szybkim tempie,
+ gotowość do współdziałania,
+ gotowość do pracy indywidualnej,
+ komunikatywność,
+ operatywność i skuteczność,
+ odpowiedzialność za działania zawodowe,
+ samodzielność,
+ samokontrola,
+ wysoka samodyscyplina,
+ systematyczność,
+ odporność emocjonalna,
+ odporność na działanie pod presją czasu,
+ radzenie sobie ze stresem,
+ rzetelność,
+ dokładność,
+ dbałość o jakość pracy,
+ gotowość do ustawicznego uczenia się,
+ zainteresowania techniczne,
+ zainteresowania informatyczne,
+ elastyczność i otwartość na zmiany.
+Więcej informacji znajduje się w sekcjach: 3.5. Kompetencje społeczne, 3.6. Profil kompetencji kluczowych
+dla zawodu.
+Wymagania zdrowotne
+Pracę w zawodzie administrator baz danych mogą wykonywać osoby o dobrym ogólnym stanie
+zdrowia – ważna jest koordynacja wzrokowo-ruchowa oraz sprawność układów kostno-stawowego
+i mięśniowego ze względu na długotrwałą pracę przy komputerze. Pod względem wydatku
+energetycznego praca w tym zawodzie należy do lekkich. W pracy występują specyficzne obciążenia
+umysłowe: rozwiązywanie problemów, analizowanie, wnioskowanie, wyjaśnianie, rozumowanie
+logiczne, wyobraźnia i myślenie twórcze.
+Przeciwwskazaniami do wykonywania zawodu administrator baz danych mogą być poważne wady
+wzroku, które utrudniają pracę przy komputerze, niesprawność kończyn górnych, niektóre wady
+i choroby kręgosłupa.
+WAŻNE:
+O stanie zdrowia i ewentualnych przeciwwskazaniach do wykonywania zawodu orzeka lekarz medycyny pracy.
+Więcej informacji znajduje się w sekcji: 4.4. Możliwości zatrudnienia osób niepełnosprawnych w zawodzie.
+INFORMACJA O ZAWODZIE – Administrator baz danych 252101
+8
+2.5. Wykształcenie, tytuły zawodowe, kwalifikacje i uprawnienia niezbędne/preferowane
+do podjęcia pracy w zawodzie
+Wykształcenie niezbędne do podjęcia pracy w zawodzie
+Obecnie (2019 r.) do podjęcia pracy w zawodzie administrator baz danych preferowane jest
+wykształcenie wyższe I lub II stopnia.
+Tytuły zawodowe, kwalifikacje i uprawnienia niezbędne/preferowane do podjęcia pracy w zawodzie
+Podjęcie pracy w zawodzie administrator baz danych ułatwia posiadanie:
+ dyplomu ukończenia studiów I lub II stopnia na kierunkach informatycznych, technicznych
+(np. mechatronika, elektronika, automatyka i robotyka) lub ścisłych (np. matematyka,
+ekonometria).
+ świadectwa ukończenia studiów podyplomowych, ukierunkowanych na projektowanie
+i administrowanie bazami danych.
+Dodatkowymi atutami przy zatrudnianiu w zawodzie administrator baz danych jest suplement dla
+absolwentów szkół wyższych – Europass (w języku polskim i angielskim), wydawany na prośbę
+zainteresowanego przez szkoły wyższe razem z dyplomem ukończenia studiów oraz zaświadczenia
+lub certyfikaty potwierdzające kwalifikacje administratora, np. w zakresie:
+ języka angielskiego na poziomie umożliwiającym posługiwania się dokumentacją,
+ relacyjnych baz danych14
+,
+ nierelacyjnych baz danych7
+,
+ technologii opartych o chmurę22
+pozwalających składować i przetwarzać dane,
+ języków zapytań do baz danych,
+ narzędzi do monitorowania i badania wydajności baz danych,
+ metod optymalizacji baz danych,
+ systemów operacyjnych,
+ zasad bezpiecznego przetwarzania danych,
+ zasad zarządzania użytkownikami i ich uprawnieniami,
+ zagadnień związanych z tworzeniem kopii zapasowych baz danych.
+Więcej informacji znajduje się w sekcji: 4.2. Instytucje oferujące kształcenie, szkolenie i/lub potwierdzanie
+kompetencji w ramach zawodu.
+2.6. Możliwości rozwoju zawodowego, awansu i potwierdzania kompetencji
+Możliwości rozwoju zawodowego i awansu
+Administrator baz danych może:
+ rozpocząć pracę jako członek zespołu zajmującego się projektowaniem i tworzeniem baz danych,
+ po zdobyciu odpowiedniego doświadczenia może awansować na stanowisko projektanta baz
+danych, a następnie administratora baz danych.
+Po zdobyciu dalszego doświadczenia może awansować na:
+ analityka baz danych,
+ konsultanta do spraw baz danych,
+ projektanta/architekta systemów teleinformatycznych wykorzystujących bazy danych,
+ kierownika działu odpowiadającego za realizację zadań związanych z wykorzystaniem baz danych
+w firmie.
+Administrator baz danych może rozwijać swoje kompetencje poprzez:
+ uczestnictwo w szkoleniach, warsztatach, konferencjach dotyczących zagadnień związanych
+z funkcjonującymi na rynku IT systemami zarządzania bazami danych,
+INFORMACJA O ZAWODZIE – Administrator baz danych 252101
+9
+ zdobywanie certyfikatów, dyplomów na szkoleniach specjalistycznych,
+ podejmowanie kształcenia i/lub szkolenia w zawodach pokrewnych,
+ studia podyplomowe.
+Możliwości potwierdzania kompetencji
+Obecnie (2019 r.) w zawodzie administrator baz danych nie ma możliwości potwierdzania
+kompetencji zawodowych w systemie edukacji formalnej i pozaformalnej.
+Administrator baz danych może potwierdzać kompetencje przydatne w zawodzie na uczelniach
+wyższych:
+ poprzez uzyskanie dyplomu ukończenia studiów I lub II stopnia potwierdzającego nabycie
+odpowiednio tytułu inżyniera lub magistra na kierunkach informatycznych, technicznych
+(np. mechatronika, elektronika, automatyka i robotyka) lub ścisłych (np. matematyka,
+ekonometria),
+ uzyskując świadectwo ukończenia studiów podyplomowych np. w zakresie projektowania
+i administrowania bazami danych.
+Formą potwierdzenia kompetencji w zawodzie administrator baz danych są również certyfikaty
+i dyplomy poświadczające posiadanie kompetencji z zakresu administracji bazami danych, wydawane
+przez komercyjne firmy szkoleniowe lub producentów oprogramowania i sprzętu.
+Więcej informacji można uzyskać w Bazie Usług Rozwojowych https://uslugirozwojowe.parp.gov.pl oraz
+Zintegrowanym Rejestrze Kwalifikacji https://rejestr.kwalifikacje.gov.pl
+2.7. Zawody pokrewne
+Osoba zatrudniona w zawodzie administrator baz danych może rozszerzać swoje kompetencje
+zawodowe w zawodach pokrewnych:
+Nazwa zawodu pokrewnego
+zgodnie z Klasyfikacją zawodów i specjalności Kod zawodu
+Projektant / architekt systemów teleinformatycznych 251103
+Analityk baz danych 252102
+Projektant baz danych 252103
