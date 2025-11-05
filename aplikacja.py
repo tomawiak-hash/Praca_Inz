@@ -31,6 +31,10 @@ if 'cel_szkolenia_text' not in st.session_state:
     st.session_state.cel_szkolenia_text = ""
 if 'tematyka_z_godzinami' not in st.session_state:
     st.session_state.tematyka_z_godzinami = []
+if 'cached_test_content' not in st.session_state:
+    st.session_state.cached_test_content = None
+if 'cached_key_content' not in st.session_state:
+    st.session_state.cached_key_content = None
 
 # ----- Funkcje Aplikacji
 def wczytaj_liste_zawodow_lokalnie():
@@ -95,40 +99,62 @@ def laduj_baze_wiedzy(folder_path='baza_wiedzy'):
             print(f"Błąd podczas wczytywania pliku {nazwa_pliku}: {e}")
     return pelny_tekst
 
-# ----- Funkcje do komunikacji z AI (zasilane przez Gemini)
-def generuj_kompletne_szkolenie(firma, nazwa_zawodu, opis_zawodu): # Usunięty argument baza_wiedzy
+def generuj_kompletne_szkolenie(firma, nazwa_zawodu, opis_zawodu, dodatkowe_zagrozenia):
     """
-    POPRAWKA: Generuje wszystko naraz, ale BEZ przesyłania 'bazy_wiedzy',
-    aby zmieścić się w darmowym limicie tokenów.
+    POPRAWKA: Definicja funkcji przyjmuje teraz argument 'dodatkowe_zagrozenia'
+    i NIE używa 'bazy_wiedzy', aby uniknąć błędów limitu tokenów.
     """
-    model = genai.GenerativeModel('gemini-pro-latest') # Używamy poprawnej nazwy
-
+    model = genai.GenerativeModel('gemini-pro-latest')
+    
     prompt = f"""
-    Jesteś ekspertem-dydaktykiem i instruktorem BHP z wieloletnim doświadczeniem w tworzeniu materiałów szkoleniowych dla polskich firm.
-    Twoim zadaniem jest stworzenie KOMPLETNEGO i BARDZO SZCZEGÓŁOWEGO materiału szkoleniowego dla stanowiska '{nazwa_zawodu}' w firmie '{firma}'.
+    Jesteś ekspertem BHP i metodykiem szkoleń. Twoim zadaniem jest stworzenie kompletnego materiału szkoleniowego dla stanowiska '{nazwa_zawodu}' w firmie '{firma}'.
 
-    WYTYCZNE, KTÓRYCH MUSISZ RYGORYSTYCZNIE PRZESTRZEGAĆ:
-    1.  **OPARCIE NA ROZPORZĄDZENIU:** Treść i struktura szkolenia MUSZĄ być zgodne z Rozporządzeniem Ministra Gospodarki i Pracy z dnia 27 lipca 2004 r. w sprawie szkolenia w dziedzinie bezpieczeństwa i higieny pracy. Pamiętaj o wymogach dla instruktażu ogólnego i stanowiskowego.
-    2.  **STRUKTURA:** Stwórz najpierw szczegółowy, hierarchiczny spis treści (główne punkty np. 1., 2., 3.), a następnie rozwiń KAŻDY punkt i podpunkt tego spisu.
-    3.  **PERSONALIZACJA:** Dostosuj treść instruktażu stanowiskowego do zagrożeń wynikających z OFICJALNEGO OPISU ZAWODU. Podawaj konkretne przykłady.
-    4.  **GŁĘBIA:** Każdy temat opisz wyczerpująco (minimum 3-4 akapity lub rozbudowane listy). Pisz profesjonalnym, ale przystępnym językiem.
-    5.  **ZGODNOŚĆ Z PRAWEM:** Gdzie to stosowne, powołuj się na polskie akty prawne (np. "Zgodnie z Kodeksem Pracy...").
-    6.  **FORMATOWANIE:** Używaj formatowania Markdown. Tytuł główny jako nagłówek poziomu 1 (`#`), rozdziały jako poziom 2 (`##`), podrozdziały jako poziom 3 (`###`).
+    MUSISZ RYGORYSTYCZNIE PRZESTRZEGAĆ PONIŻSZEJ STRUKTURY I ZAKRESU TEMATYCZNEGO, które są oparte na Załączniku nr 1 do Rozporządzenia Ministra Gospodarki i Pracy z dnia 27 lipca 2004 r.
+
+    Twoje zadanie składa się z dwóch części. Rozwiń KAŻDY z poniższych punktów:
+
+    CZĘŚĆ 1: INSTRUKTAŻ OGÓLNY
+    (Tematy z ramowego programu instruktażu ogólnego)
+    1. Istota bezpieczeństwa i higieny pracy.
+    2. Zakres obowiązków i uprawnień pracodawcy, pracowników oraz poszczególnych komórek organizacyjnych zakładu pracy i organizacji społecznych w zakresie bezpieczeństwa i higieny pracy.
+    3. Odpowiedzialność za naruszenie przepisów lub zasad bezpieczeństwa i higieny pracy.
+    4. Zasady poruszania się na terenie zakładu pracy.
+    5. Zagrożenia wypadkowe i zagrożenia dla zdrowia występujące w zakładzie i podstawowe środki zapobiegawcze.
+    6. Podstawowe zasady bezpieczeństwa i higieny pracy związane z obsługą urządzeń technicznych oraz transportem wewnątrzzakładowym.
+    7. Zasady przydziału odzieży roboczej i obuwia roboczego oraz środków ochrony indywidualnej, w tym w odniesieniu do stanowiska pracy instruowanego.
+    8. Porządek i czystość w miejscu pracy - ich wpływ na zdrowie i bezpieczeństwo pracownika.
+    9. Profilaktyczna opieka lekarska - zasady jej sprawowania w odniesieniu do stanowiska instruowanego.
+    10. Podstawowe zasady ochrony przeciwpożarowej oraz postępowania w razie pożaru.
+    11. Postępowanie w razie wypadku, w tym organizacja i zasady udzielania pierwszej pomocy.
+    
+    CZĘŚĆ 2: INSTRUKTAŻ STANOWISKOWY
+    (Tematy z ramowego programu instruktażu stanowiskowego)
+    1. Przygotowanie pracownika do wykonywania pracy (omówienie warunków pracy, czynników środowiska pracy, ryzyka zawodowego).
+    2. Pokaz przez instruktora sposobu wykonywania pracy zgodnie z przepisami i zasadami BHP.
+    3. Próbne wykonanie zadania przez pracownika pod kontrolą instruktora.
+    4. Samodzielna praca pracownika pod nadzorem instruktora.
+    5. Omówienie i ocena przebiegu wykonywania pracy przez pracownika.
+
+    WYTYCZNE DODATKOWE:
+    -   **PERSONALIZACJA:** Podczas rozwijania punktów Instruktażu Stanowiskowego (Część 2), musisz bezpośrednio nawiązywać do zagrożeń i zadań z 'OFICJALNEGO OPISU ZAWODU' oraz 'DODATKOWYCH ZAGROŻEŃ' podanych poniżej.
+    -   **GŁĘBIA MERYTORYCZNA:** Każdy z 16 powyższych punktów (11+5) rozwiń w sposób wyczerpujący (minimum 2-3 akapity lub szczegółowa lista wypunktowana).
+    -   **JAKOŚĆ I JĘZYK:** Pisz profesjonalnym, formalnym, ale zrozumiałym językiem. Powołuj się na akty prawne (np. "Zgodnie z Kodeksem Pracy...").
+    -   **FORMATOWANIE:** Używaj Markdown. Tytuł główny jako nagłówek poziomu 1 (#), Części jako poziom 2 (##), a poszczególne punkty jako poziom 3 (###).
 
     --- OFICJALNY OPIS ZAWODU (DLA PERSONALIZACJI) ---
     {opis_zawodu}
-    --- KONIEC OPISU ---
-
-    Stwórz teraz kompletny materiał szkoleniowy zgodny z rozporządzeniem.
-    """ # Usunięto odwołania do BAZY WIEDZY i DODATKOWYCH ZAGROŻEŃ
-
+    
+    --- DODATKOWE ZAGROŻENIA WSKAZANE PRZEZ UŻYTKOWNIKA ---
+    {dodatkowe_zagrozenia}
+    
+    Stwórz teraz kompletny materiał szkoleniowy zgodny z powyższymi wytycznymi.
+    """
+    
     try:
-        # Dodajemy konfigurację generowania z temperaturą
         response = model.generate_content(prompt, generation_config=genai.types.GenerationConfig(temperature=0.5))
         
-        # Poprawione wyrażenie regularne do wyciągania spisu treści
-        # Szukamy linii zaczynających się od cyfry lub cyfry rzymskiej LUB słowa MODUŁ
-        st.session_state.spis_tresci_do_tematyki = re.findall(r"^(?:#+\s)?(?:(?:\d+|[IVXLCDM]+)\.\s.*|MODUŁ\s+[IVXLCDM]+:.*)", response.text, re.MULTILINE | re.IGNORECASE)
+        # Poprawione wyrażenie regularne, aby pasowało do nowej, stałej struktury
+        st.session_state.spis_tresci_do_tematyki = re.findall(r"^(?:\d+)\.\s.*", response.text, re.MULTILINE)
         
         return response.text
     except Exception as e:
@@ -151,37 +177,91 @@ def generuj_cel_szkolenia(nazwa_szkolenia):
         return f"Błąd generowania celu: {e}"
 
 @st.cache_data
+def generuj_test_bhp(_finalna_tresc):
+    """
+    Generuje test (pytania) ORAZ klucz odpowiedzi, oddzielone separatorem.
+    """
+    model = genai.GenerativeModel('gemini-pro-latest')
+    prompt = f"""
+    Jesteś egzaminatorem BHP. Otrzymujesz materiał szkoleniowy.
+    Twoim zadaniem jest stworzenie testu (10 pytań A,B,C) oraz klucza odpowiedzi.
+
+    WYTYCZNE FORMATOWANIA (BARDZO WAŻNE):
+    1.  **NIE DODWAJ ŻADNEGO WSTĘPU:** Nie pisz "Doskonale...", "Oto test...", "Imię i nazwisko:". Zacznij OD RAZU od "1. Pytanie...".
+    2.  **NIE UŻYWAJ POGRUBIENIA (MARKDOWN):** Nie używaj gwiazdek `**` do pogrubiania pytań. Pisz czystym tekstem.
+    3.  **FORMAT PYTAŃ:**
+        1.  [Treść pytania]
+            A. [Odpowiedź A]
+            B. [Odpowiedź B]
+            C. [Odpowiedź C]
+    4.  **SEPERATOR:** Po 10 pytaniach, wstaw DOKŁADNIE taką linię:
+        ---KLUCZ---
+    5.  **KLUCZ ODPOWIEDZI:** Po separatorze, wstaw klucz odpowiedzi w formacie:
+        1. A
+        2. B
+        3. C
+        ...itd.
+
+    --- MATERIAŁ SZKOLENIOWY DO ANALIZY ---
+    {_finalna_tresc}
+    --- KONIEC MATERIAŁU ---
+
+    Wygeneruj teraz test i klucz odpowiedzi zgodnie z wytycznymi.
+    """
+    try:
+        response = model.generate_content(prompt)
+        # Sprawdzamy, czy AI poprawnie wygenerowało separator
+        if "---KLUCZ---" in response.text:
+            # Dzielimy tekst na dwie części: test i klucz
+            tresc_testu, klucz_odpowiedzi = response.text.split("---KLUCZ---", 1)
+            return tresc_testu.strip(), klucz_odpowiedzi.strip()
+        else:
+            # Jeśli AI nie zastosowało się do poleceń
+            st.error("AI nie wygenerowało poprawnie klucza odpowiedzi. Próbuję jeszcze raz...")
+            return response.text, None # Zwracamy tylko test
+    except Exception as e:
+        st.error(f"Błąd AI podczas generowania testu: {e}")
+        return "Nie udało się wygenerować testu.", None
+    
+@st.cache_data
 def przypisz_godziny_do_tematow(_spis_tresci_lista):
     """
     Analizuje listę tematów i przypisuje szacowaną liczbę godzin.
     """
     model = genai.GenerativeModel('gemini-pro-latest')
     tekst_spisu = "\n".join(_spis_tresci_lista)
+    
     prompt = f"""
     Jesteś metodykiem szkoleń BHP. Otrzymujesz poniższy spis głównych tematów szkolenia. Oszacuj, ile godzin lekcyjnych (45 min) potrzeba na realizację każdego tematu.
-    "Odpowiedź zwróć TYLKO w formacie listy: \"Nazwa tematu BEZ numeracji | X\"."
+    
+    Odpowiedź zwróć TYLKO w formacie listy: "Nazwa tematu BEZ NUMERACJI | X"
+    
     Przykład:
     Wprowadzenie do BHP | 1
     Zagrożenia na stanowisku pracy | 2
-    Oto spis treści:
+
+    Oto spis treści do analizy:
     {tekst_spisu}
     """
     try:
-        response = model.generate_content(prompt, generation_config=genai.types.GenerationConfig(temperature=0.5))
+        response = model.generate_content(prompt)
         tematyka = []
         if hasattr(response, 'text'):
             for linia in response.text.splitlines():
                 if '|' in linia:
                     try:
                         czesci = linia.split('|')
-                        nazwa = czesci[0].strip()
+                        # ZMIANA: Bierzemy 'nazwa' bezpośrednio, bez usuwania numeracji
+                        nazwa = czesci[0].strip() 
                         godziny = int(czesci[1].strip())
                         tematyka.append({"nazwa": nazwa, "godziny": godziny})
                     except (ValueError, IndexError):
                         continue
         else:
             st.error("Nie udało się uzyskać odpowiedzi od AI przy przypisywaniu godzin.")
-        return tematyka[:len(_spis_tresci_lista)]
+        
+        # Zwracamy tyle wierszy ile było w oryginalnym spisie
+        return tematyka[:len(_spis_tresci_lista)] 
     except Exception as e:
         st.error(f"Błąd AI przy przypisywaniu godzin: {e}")
         return []
@@ -204,7 +284,7 @@ def generuj_docx(nazwa_szablonu, kontekst, nazwa_pliku_wynikowego):
         return None
 
 # ----- Główny interfejs aplikacji
-st.title("🎓 Inteligentny Generator Szkoleń BHP (zasilany przez Gemini)")
+st.title("🎓 Inteligentny Generator Szkoleń BHP")
 
 # --- Etap 1: Wybór zawodu i generowanie treści ---
 if st.session_state.etap == 1:
@@ -230,7 +310,7 @@ if st.session_state.etap == 1:
                 if "Błąd:" in opis_zawodu:
                     st.error(opis_zawodu)
                 else:
-                    finalna_tresc = generuj_kompletne_szkolenie(nazwa_firmy, wybrany_zawod_nazwa, opis_zawodu)
+                    finalna_tresc = generuj_kompletne_szkolenie(nazwa_firmy, wybrany_zawod_nazwa, opis_zawodu, dodatkowe_zagrozenia)
                     if "Błąd generowania treści." not in finalna_tresc:
                         st.session_state.finalna_tresc = finalna_tresc
                         st.session_state.zapisana_firma = nazwa_firmy or "Twoja Firma"
@@ -714,8 +794,69 @@ elif st.session_state.etap == 3:
                         else: st.error("Brak tabeli w szablonie.")
                     except Exception as e: st.error(f"Błąd: {e}")
             else: st.warning("Wprowadź listę uczestników.")
+    
+    st.markdown("---")
+
+# --- Sekcja generowania TESTU SPRAWDZAJĄCEGO ---
+    with st.container(border=True):
+        st.subheader("📝 Wygeneruj Test Sprawdzający")
+        st.info("Aplikacja przeanalizuje całą treść szkolenia i na jej podstawie stworzy test oraz osobny klucz odpowiedzi.")
+
+        # Przycisk "Generuj" teraz tylko wywołuje AI i zapisuje wyniki w pamięci
+        if st.button("Generuj Test i Klucz Odpowiedzi", key="btn_test"):
+            with st.spinner("Generowanie testu (to może chwilę potrwać)..."):
+                
+                # Wywołujemy zaktualizowaną funkcję AI, która zwraca DWIE wartości
+                tresc_testu, klucz_odpowiedzi = generuj_test_bhp(st.session_state.finalna_tresc)
+                
+                if klucz_odpowiedzi: # Jeśli udało się poprawnie rozdzielić
+                    # Zapisujemy wyniki w pamięci aplikacji
+                    st.session_state.cached_test_content = tresc_testu
+                    st.session_state.cached_key_content = klucz_odpowiedzi
+                    st.success("Test i klucz odpowiedzi zostały wygenerowane! Możesz je teraz pobrać.")
+                else:
+                    # Jeśli AI zawiodło i nie dało klucza, zapisujemy cokolwiek dało
+                    st.session_state.cached_test_content = tresc_testu
+                    st.session_state.cached_key_content = None # Resetujemy klucz
+                    st.warning("Nie udało się automatycznie oddzielić klucza odpowiedzi. Plik testu może zawierać obie części.")
+
+        # ----- Przyciski pobierania (pojawią się po wygenerowaniu) -----
+        
+        # Przycisk pobierania TESTU (bez klucza)
+        if 'cached_test_content' in st.session_state and st.session_state.cached_test_content:
+            context_test = {
+                'tresc_testu': st.session_state.cached_test_content
+                # Zauważ, że nie ma tu 'nazwa_szkolenia', ponieważ przenieśliśmy to do szablonu
+            }
+            # Używamy szablonu 'test_szablon.docx'
+            plik_docx_test = generuj_docx("test_szablon.docx", context_test, f"Test_{st.session_state.wybrany_zawod}.docx")
+            if plik_docx_test:
+                st.download_button(
+                    label="Pobierz gotowy TEST (.docx)",
+                    data=plik_docx_test,
+                    file_name=f"Test_{st.session_state.wybrany_zawod}.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    key="download_test"
+                )
+
+        # Przycisk pobierania KLUCZA ODPOWIEDZI (osobno)
+        if 'cached_key_content' in st.session_state and st.session_state.cached_key_content:
+            context_key = {
+                'klucz_odpowiedzi': st.session_state.cached_key_content
+            }
+            # Używamy nowego szablonu 'klucz_odpowiedzi_szablon.docx'
+            plik_docx_key = generuj_docx("klucz_odpowiedzi_szablon.docx", context_key, f"Klucz_{st.session_state.wybrany_zawod}.docx")
+            if plik_docx_key:
+                st.download_button(
+                    label="Pobierz KLUCZ ODPOWIEDZI (.docx)",
+                    data=plik_docx_key,
+                    file_name=f"Klucz_odpowiedzi_{st.session_state.wybrany_zawod}.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    key="download_key"
+                )
 
     st.markdown("---")
+
     if st.button("Stwórz zupełnie nowe szkolenie"):
         st.session_state.etap = 1
         st.rerun()
