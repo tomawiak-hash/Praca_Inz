@@ -12,7 +12,7 @@ from docx import Document
 st.set_page_config(page_title="Inteligentny Generator Szkoleń BHP", page_icon="🎓", layout="wide")
 
 # Wstaw tutaj swój klucz API z Google AI Studio
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+genai.configure(api_key="AIzaSyBYtQ-Y7nfP7h-4fqT4gMDRzed0b-IVVjw")
 
 # ----- Inicjalizacja "pamięci" aplikacji (session_state) - KOMPLETNA
 if 'etap' not in st.session_state:
@@ -31,10 +31,6 @@ if 'cel_szkolenia_text' not in st.session_state:
     st.session_state.cel_szkolenia_text = ""
 if 'tematyka_z_godzinami' not in st.session_state:
     st.session_state.tematyka_z_godzinami = []
-if 'cached_test_content' not in st.session_state:
-    st.session_state.cached_test_content = None
-if 'cached_key_content' not in st.session_state:
-    st.session_state.cached_key_content = None
 
 # ----- Funkcje Aplikacji
 def wczytaj_liste_zawodow_lokalnie():
@@ -177,26 +173,20 @@ def generuj_cel_szkolenia(nazwa_szkolenia):
         return f"Błąd generowania celu: {e}"
 
 @st.cache_data
-def generuj_test_bhp(_finalna_tresc):
+def generuj_test_bhp(_finalna_tresc): # Używamy _finalna_tresc, aby pomóc cache
     """
-    Generuje test (pytania) ORAZ klucz odpowiedzi, oddzielone separatorem.
+    Generuje test wielokrotnego wyboru (ABC) na podstawie wygenerowanej treści szkolenia.
     """
     model = genai.GenerativeModel('gemini-pro-latest')
     prompt = f"""
-    Jesteś egzaminatorem BHP. Otrzymujesz materiał szkoleniowy.
-    Twoim zadaniem jest stworzenie testu (10 pytań A,B,C) oraz klucza odpowiedzi.
+    Jesteś egzaminatorem BHP. Otrzymujesz poniżej kompletny materiał szkoleniowy.
+    Twoim zadaniem jest stworzenie na jego podstawie testu sprawdzającego wiedzę.
 
-    WYTYCZNE FORMATOWANIA (BARDZO WAŻNE):
-    1.  **NIE DODWAJ ŻADNEGO WSTĘPU:** Nie pisz "Doskonale...", "Oto test...", "Imię i nazwisko:". Zacznij OD RAZU od "1. Pytanie...".
-    2.  **NIE UŻYWAJ POGRUBIENIA (MARKDOWN):** Nie używaj gwiazdek `**` do pogrubiania pytań. Pisz czystym tekstem.
-    3.  **FORMAT PYTAŃ:**
-        1.  [Treść pytania]
-            A. [Odpowiedź A]
-            B. [Odpowiedź B]
-            C. [Odpowiedź C]
-    4.  **SEPERATOR:** Po 10 pytaniach, wstaw DOKŁADNIE taką linię:
-        ---KLUCZ---
-    5.  **KLUCZ ODPOWIEDZI:** Po separatorze, wstaw klucz odpowiedzi w formacie:
+    WYTYCZNE TESTU:
+    1.  **Liczba pytań:** Dokładnie 10 pytań.
+    2.  **Poziom trudności:** Łatwy (pytania o podstawowe fakty i zasady z tekstu).
+    3.  **Format pytań:** Pytania zamknięte, wielokrotnego wyboru z trzema odpowiedziami (A, B, C).
+    4.  **Klucz odpowiedzi:** Na samym końcu dokumentu dodaj sekcję "KLUCZ ODPOWIEDZI" w formacie:
         1. A
         2. B
         3. C
@@ -206,23 +196,15 @@ def generuj_test_bhp(_finalna_tresc):
     {_finalna_tresc}
     --- KONIEC MATERIAŁU ---
 
-    Wygeneruj teraz test i klucz odpowiedzi zgodnie z wytycznymi.
+    Stwórz teraz kompletny test (10 pytań + klucz odpowiedzi).
     """
     try:
         response = model.generate_content(prompt)
-        # Sprawdzamy, czy AI poprawnie wygenerowało separator
-        if "---KLUCZ---" in response.text:
-            # Dzielimy tekst na dwie części: test i klucz
-            tresc_testu, klucz_odpowiedzi = response.text.split("---KLUCZ---", 1)
-            return tresc_testu.strip(), klucz_odpowiedzi.strip()
-        else:
-            # Jeśli AI nie zastosowało się do poleceń
-            st.error("AI nie wygenerowało poprawnie klucza odpowiedzi. Próbuję jeszcze raz...")
-            return response.text, None # Zwracamy tylko test
+        return response.text
     except Exception as e:
         st.error(f"Błąd AI podczas generowania testu: {e}")
-        return "Nie udało się wygenerować testu.", None
-    
+        return "Nie udało się wygenerować testu."
+
 @st.cache_data
 def przypisz_godziny_do_tematow(_spis_tresci_lista):
     """
@@ -284,7 +266,7 @@ def generuj_docx(nazwa_szablonu, kontekst, nazwa_pliku_wynikowego):
         return None
 
 # ----- Główny interfejs aplikacji
-st.title("🎓 Inteligentny Generator Szkoleń BHP")
+st.title("🎓 Inteligentny Generator Szkoleń BHP (zasilany przez Gemini)")
 
 # --- Etap 1: Wybór zawodu i generowanie treści ---
 if st.session_state.etap == 1:
@@ -797,63 +779,35 @@ elif st.session_state.etap == 3:
     
     st.markdown("---")
 
-# --- Sekcja generowania TESTU SPRAWDZAJĄCEGO ---
+    # --- Sekcja generowania TESTU SPRAWDZAJĄCEGO ---
     with st.container(border=True):
         st.subheader("📝 Wygeneruj Test Sprawdzający")
-        st.info("Aplikacja przeanalizuje całą treść szkolenia i na jej podstawie stworzy test oraz osobny klucz odpowiedzi.")
+        st.info("Aplikacja przeanalizuje całą treść szkolenia i na jej podstawie stworzy test.")
 
-        # Przycisk "Generuj" teraz tylko wywołuje AI i zapisuje wyniki w pamięci
-        if st.button("Generuj Test i Klucz Odpowiedzi", key="btn_test"):
+        if st.button("Generuj Test", key="btn_test"):
             with st.spinner("Generowanie testu (to może chwilę potrwać)..."):
+                # Wywołujemy nową funkcję AI, przekazując jej całą treść
+                tresc_testu_wygenerowana = generuj_test_bhp(st.session_state.finalna_tresc)
                 
-                # Wywołujemy zaktualizowaną funkcję AI, która zwraca DWIE wartości
-                tresc_testu, klucz_odpowiedzi = generuj_test_bhp(st.session_state.finalna_tresc)
-                
-                if klucz_odpowiedzi: # Jeśli udało się poprawnie rozdzielić
-                    # Zapisujemy wyniki w pamięci aplikacji
-                    st.session_state.cached_test_content = tresc_testu
-                    st.session_state.cached_key_content = klucz_odpowiedzi
-                    st.success("Test i klucz odpowiedzi zostały wygenerowane! Możesz je teraz pobrać.")
+                if "Nie udało się wygenerować testu" not in tresc_testu_wygenerowana:
+                    context = {
+                        'nazwa_szkolenia': f"Szkolenie wstępne BHP dla stanowiska '{st.session_state.wybrany_zawod}'",
+                        'tresc_testu': tresc_testu_wygenerowana
+                    }
+                    
+                    # Używamy naszej istniejącej funkcji generuj_docx
+                    plik_docx = generuj_docx("test_szablon.docx", context, f"Test_{st.session_state.wybrany_zawod}.docx")
+                    
+                    if plik_docx:
+                        st.download_button(
+                            label="Pobierz gotowy test (.docx)",
+                            data=plik_docx,
+                            file_name=f"Test_{st.session_state.wybrany_zawod}.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="download_test"
+                        )
                 else:
-                    # Jeśli AI zawiodło i nie dało klucza, zapisujemy cokolwiek dało
-                    st.session_state.cached_test_content = tresc_testu
-                    st.session_state.cached_key_content = None # Resetujemy klucz
-                    st.warning("Nie udało się automatycznie oddzielić klucza odpowiedzi. Plik testu może zawierać obie części.")
-
-        # ----- Przyciski pobierania (pojawią się po wygenerowaniu) -----
-        
-        # Przycisk pobierania TESTU (bez klucza)
-        if 'cached_test_content' in st.session_state and st.session_state.cached_test_content:
-            context_test = {
-                'tresc_testu': st.session_state.cached_test_content
-                # Zauważ, że nie ma tu 'nazwa_szkolenia', ponieważ przenieśliśmy to do szablonu
-            }
-            # Używamy szablonu 'test_szablon.docx'
-            plik_docx_test = generuj_docx("test_szablon.docx", context_test, f"Test_{st.session_state.wybrany_zawod}.docx")
-            if plik_docx_test:
-                st.download_button(
-                    label="Pobierz gotowy TEST (.docx)",
-                    data=plik_docx_test,
-                    file_name=f"Test_{st.session_state.wybrany_zawod}.docx",
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    key="download_test"
-                )
-
-        # Przycisk pobierania KLUCZA ODPOWIEDZI (osobno)
-        if 'cached_key_content' in st.session_state and st.session_state.cached_key_content:
-            context_key = {
-                'klucz_odpowiedzi': st.session_state.cached_key_content
-            }
-            # Używamy nowego szablonu 'klucz_odpowiedzi_szablon.docx'
-            plik_docx_key = generuj_docx("klucz_odpowiedzi_szablon.docx", context_key, f"Klucz_{st.session_state.wybrany_zawod}.docx")
-            if plik_docx_key:
-                st.download_button(
-                    label="Pobierz KLUCZ ODPOWIEDZI (.docx)",
-                    data=plik_docx_key,
-                    file_name=f"Klucz_odpowiedzi_{st.session_state.wybrany_zawod}.docx",
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    key="download_key"
-                )
+                    st.error("Nie udało się wygenerować treści testu.")
 
     st.markdown("---")
 
