@@ -58,6 +58,11 @@ if st.session_state.etap == 1:
     
     col1, col2 = st.columns(2)
     
+    with col1:
+        lista_zawodow = wczytaj_liste_zawodow_lokalnie()
+        wybrany_zawod_nazwa = st.selectbox("Stanowisko pracy:", options=list(lista_zawodow.keys()), index=None, placeholder="Wybierz zawód...")
+        nazwa_firmy = st.text_input("Nazwa firmy:", value="Przykładowa Firma S.A.")
+
     with col2:
         # 1. Definiujemy jedną główną listę (dzięki temu łatwo nią zarządzać)
         LISTA_SRODOWISK = [
@@ -104,6 +109,22 @@ if st.session_state.etap == 1:
         if srodowisko_full and srodowiska_dodatkowe:
             lista_dodatkowych = ", ".join(srodowiska_dodatkowe)
             srodowisko_full += f" oraz okresowo: {lista_dodatkowych}"
+        
+    # NOWE POLE: OBOWIĄZKI
+    obowiazki = st.text_area(
+        "Główne obowiązki na stanowisku (Kluczowe dla Instruktażu Stanowiskowego, opcjonalne):",
+        placeholder="Np. obsługa komputera, kontakt z klientem, archiwizacja dokumentów, obsługa niszczarki...",
+        height=100
+    )
+
+    # Stare pole (zmieniona etykieta)
+    dodatkowe_zagrozenia = st.text_area(
+        "Specyficzne zagrożenia (opcjonalnie):", 
+        help="Jeśli pole zostanie puste, AI samo zidentyfikuje zagrożenia na podstawie obowiązków.",
+        placeholder="Np. stres, praca przy monitorze >4h, dźwiganie pudeł z papierem..."
+    )
+    
+# ... (Twój kod z selectbox i multiselect powyżej zostaje) ...
 
     if st.button("🚀 Generuj kompletne szkolenie"):
         if not wybrany_zawod_nazwa:
