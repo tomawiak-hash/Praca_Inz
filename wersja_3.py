@@ -75,7 +75,7 @@ if st.session_state.etap == 1:
         # 2. Wybór głównego środowiska
         # index=None sprawia, że pole jest puste na starcie i wymusza wybór
         srodowisko_glowne = st.selectbox(
-            "Główne środowisko pracy (90% czasu):",
+            "Główne środowisko pracy:",
             options=LISTA_SRODOWISK,
             index=None,
             placeholder="Wybierz główne miejsce..."
