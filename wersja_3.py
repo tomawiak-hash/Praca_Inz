@@ -58,44 +58,52 @@ if st.session_state.etap == 1:
     
     col1, col2 = st.columns(2)
     
-    with col1:
-        lista_zawodow = wczytaj_liste_zawodow_lokalnie()
-        wybrany_zawod_nazwa = st.selectbox("Stanowisko pracy:", options=list(lista_zawodow.keys()), index=None, placeholder="Wybierz zawód...")
-        nazwa_firmy = st.text_input("Nazwa firmy:", value="Przykładowa Firma S.A.")
-
     with col2:
-        # NOWE PODEJŚCIE: Środowisko Podstawowe + Dodatkowe
-        srodowisko_glowne = st.selectbox(
-            "Główne środowisko pracy:",
-            ["Biuro (administracja)", "Magazyn", "Praca zdalna/hybrydowa", "Archiwum", "Hala produkcyjna", "Teren zewnętrzny", "Wyjazdy służbowe (samochód)", "Serwerownia", "Sklep/Handel", "Warsztat", "Laboratorium", "Recepcja", "Teren otwarty/Budowa"],
-            index=0
-        )
-        
-        srodowiska_dodatkowe = st.multiselect(
-            "Dodatkowe środowisko pracy (opcjonalnie):",
-            ["Magazyn", "Praca zdalna/hybrydowa", "Archiwum", "Hala produkcyjna", "Teren zewnętrzny", "Wyjazdy służbowe (samochód)", "Serwerownia", "Sklep/Handel", "Warsztat", "Laboratorium", "Recepcja", "Teren otwarty/Budowa"]
-        )
-        
-        # Łączymy to w jeden string dla AI
-        srodowisko_full = srodowisko_glowne
-        if srodowiska_dodatkowe:
-            srodowisko_full += f" oraz okresowo: {', '.join(srodowiska_dodatkowe)}"
-        
-    # NOWE POLE: OBOWIĄZKI
-    obowiazki = st.text_area(
-        "Główne obowiązki na stanowisku (Kluczowe dla Instruktażu Stanowiskowego, opcjonalne):",
-        placeholder="Np. obsługa komputera, kontakt z klientem, archiwizacja dokumentów, obsługa niszczarki...",
-        height=100
-    )
+        # 1. Definiujemy jedną główną listę (dzięki temu łatwo nią zarządzać)
+        LISTA_SRODOWISK = [
+            "Biuro (administracja)", "Magazyn", "Praca zdalna/hybrydowa", 
+            "Archiwum", "Hala produkcyjna", "Teren zewnętrzny", 
+            "Wyjazdy służbowe (samochód)", "Serwerownia", "Sklep/Handel", 
+            "Warsztat", "Laboratorium", "Recepcja", "Teren otwarty/Budowa"
+        ]
 
-    # Stare pole (zmieniona etykieta)
-    dodatkowe_zagrozenia = st.text_area(
-        "Specyficzne zagrożenia (opcjonalnie):", 
-        help="Jeśli pole zostanie puste, AI samo zidentyfikuje zagrożenia na podstawie obowiązków.",
-        placeholder="Np. stres, praca przy monitorze >4h, dźwiganie pudeł z papierem..."
-    )
-    
-# ... (Twój kod z selectbox i multiselect powyżej zostaje) ...
+        # 2. Wybór głównego środowiska
+        # index=None sprawia, że pole jest puste na starcie i wymusza wybór
+        srodowisko_glowne = st.selectbox(
+            "Główne środowisko pracy (90% czasu):",
+            options=LISTA_SRODOWISK,
+            index=None,
+            placeholder="Wybierz główne miejsce..."
+        )
+        
+        # 3. Logika dla dodatkowych środowisk
+        srodowiska_dodatkowe = [] # Domyślnie pusta lista
+
+        if srodowisko_glowne:
+            # Tworzymy przefiltrowaną listę: Wszystko MINUS to co wybrano wyżej
+            opcje_dla_dodatkowych = [env for env in LISTA_SRODOWISK if env != srodowisko_glowne]
+            
+            srodowiska_dodatkowe = st.multiselect(
+                "Dodatkowe środowisko pracy (opcjonalnie):",
+                options=opcje_dla_dodatkowych,
+                placeholder="Wybierz dodatkowe miejsca..."
+            )
+        else:
+            # Jeśli główne nie wybrane, pokazujemy zablokowane pole z instrukcją
+            st.multiselect(
+                "Dodatkowe środowisko pracy:",
+                options=[],
+                disabled=True,
+                placeholder="Najpierw wybierz środowisko główne ⬆️"
+            )
+        
+        # 4. Łączenie zmiennych w jeden tekst dla AI
+        # Zabezpieczamy się, żeby srodowisko_full nie było None
+        srodowisko_full = srodowisko_glowne if srodowisko_glowne else ""
+        
+        if srodowisko_full and srodowiska_dodatkowe:
+            lista_dodatkowych = ", ".join(srodowiska_dodatkowe)
+            srodowisko_full += f" oraz okresowo: {lista_dodatkowych}"
 
     if st.button("🚀 Generuj kompletne szkolenie"):
         if not wybrany_zawod_nazwa:
