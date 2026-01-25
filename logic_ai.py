@@ -5,7 +5,7 @@ import json
 import time
 
 # Konfiguracja modelu
-MODEL_NAME = 'gemini-1.5-pro' # Możesz tu użyć 1.5-flash, 2.0-flash lub pro
+MODEL_NAME = 'gemini-2.5-flash' # Możesz tu użyć 1.5-flash, 2.0-flash lub pro
 
 try:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
