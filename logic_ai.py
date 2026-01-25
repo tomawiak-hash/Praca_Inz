@@ -12,6 +12,7 @@ try:
 except Exception:
     pass 
 
+@st.cache_data
 def generuj_kompletne_szkolenie(firma, nazwa_zawodu, opis_zawodu, dodatkowe_zagrozenia, obowiazki, srodowisko):
     model = genai.GenerativeModel(MODEL_NAME)
     
@@ -98,7 +99,8 @@ def generuj_kompletne_szkolenie(firma, nazwa_zawodu, opis_zawodu, dodatkowe_zagr
     except Exception as e:
         st.error(f"Błąd API: {e}")
         return "Błąd generowania treści."
-
+    
+@st.cache_data
 def koryguj_tresc_szkolenia(stara_tresc, uwagi_uzytkownika):
     """
     Pozwala użytkownikowi zmienić fragment szkolenia bez generowania całości od nowa.
