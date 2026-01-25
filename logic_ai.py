@@ -66,6 +66,9 @@ def generuj_kompletne_szkolenie(firma, nazwa_zawodu, opis_zawodu, dodatkowe_zagr
     1. **LICZBY I NORMY:** Nie wymyślaj wartości liczbowych! Jeśli podajesz parametry (np. oświetlenie, dźwiganie), MUSISZ powołać się na konkretną normę (np. "zgodnie z normą PN-EN 12464-1..." lub "zgodnie z Rozporządzeniem w sprawie ręcznych prac transportowych"). Jeśli nie znasz dokładnej wartości, napisz: "parametry zgodne z obowiązującymi normami".
     2. **PERSONALIZACJA:** W Instruktażu Stanowiskowy UŻYJ konkretnych przykładów z sekcji "Główne obowiązki" i "Dodatkowe zagrożenia".
     3. **STYLISTYKA:** Używaj punktorów, pogrubień i języka instruktażowego.
+    4. ZAWSZE cytuj podstawy prawne (używaj słów: "zgodnie z art.", "wg normy PN-EN", "Rozporządzenie").
+    5. NIE WPISUJ czasu trwania w godzinach (jest w harmonogramie).
+    6. Styl instruktażowy, konkretny.
 
     FORMATOWANIE KOŃCOWE (BARDZO WAŻNE):
     1. Nie używaj ŻADNYCH wstępów typu "Oczywiście", "Oto szkolenie", "Poniżej znajduje się...".
@@ -99,25 +102,29 @@ def generuj_kompletne_szkolenie(firma, nazwa_zawodu, opis_zawodu, dodatkowe_zagr
 def koryguj_tresc_szkolenia(stara_tresc, uwagi_uzytkownika):
     """
     Pozwala użytkownikowi zmienić fragment szkolenia bez generowania całości od nowa.
+    Wersja WZMOCNIONA - wymusza edycję konkretnych sekcji.
     """
     model = genai.GenerativeModel(MODEL_NAME)
     
     prompt = f"""
-    Jesteś redaktorem dokumentacji BHP. Użytkownik zgłasza uwagi do istniejącego tekstu szkolenia.
-    
-    TWOJE ZADANIE:
-    Wprowadź poprawki do poniższego tekstu zgodnie z wytycznymi użytkownika. 
-    Zachowaj resztę tekstu bez zmian, chyba że uwagi wymuszają szerszą edycję.
-    Zachowaj formatowanie Markdown (pogrubienia, nagłówki).
-    
-    UWAGI UŻYTKOWNIKA: "{uwagi_uzytkownika}"
-    
-    TEKST ORYGINALNY:
+    Jesteś precyzyjnym Edytorem Dokumentacji BHP.
+    Twoim zadaniem jest zmodyfikowanie poniższego tekstu szkolenia DOKŁADNIE według instrukcji użytkownika.
+
+    INSTRUKCJA UŻYTKOWNIKA: "{uwagi_uzytkownika}"
+
+    ZASADY EDYCJI (PRZESTRZEGAJ BEZWZGLĘDNIE):
+    1. LOKALIZACJA: Znajdź w tekście fragment, którego dotyczy instrukcja (np. konkretny punkt, sekcję lub nagłówek).
+    2. AKCJA: Wykonaj polecenie (DODAJ treść, USUŃ treść lub ZMIEŃ treść). Jeśli użytkownik prosi o dodanie punktu, dopisz go w logicznym miejscu, zachowując numerację lub styl wypunktowania.
+    3. CAŁOŚĆ: Wygeneruj PONOWNIE CAŁY DOKUMENT ze wprowadzonymi zmianami. Nie streszczaj, nie ucinaj, nie pisz "Zrobione". Muszę otrzymać pełny tekst gotowy do druku.
+    4. FORMATOWANIE: Zachowaj oryginalne nagłówki i pogrubienia (Markdown).
+
+    TEKST ORYGINALNY DO EDYCJI:
     {stara_tresc}
     """
     
     try:
-        response = model.generate_content(prompt)
+        # Zwiększamy nieco temperaturę, żeby model był bardziej kreatywny przy dopisywaniu nowych treści
+        response = model.generate_content(prompt, generation_config=genai.types.GenerationConfig(temperature=0.4))
         return response.text
     except Exception as e:
         return f"Błąd korekty: {e}"
@@ -165,6 +172,40 @@ def generuj_test_bhp(_finalna_tresc):
     except Exception as e:
         st.error(f"Błąd generowania pytań: {e}")
         return "Błąd.", None
+
+@st.cache_data
+def przeprowadz_audyt_tresci(tekst):
+    """
+    Sprawdza występowanie kluczowych elementów w wygenerowanym szkoleniu.
+    """
+    tekst_lower = tekst.lower()
+    
+    # Definicja kryteriów
+    kryteria = {
+        "Podstawa prawna": [
+            # Dodano skróty i synonimy, żeby audyt był bardziej wyrozumiały
+            "rozporządzenie", "kodeks pracy", "dz.u.", "art.", "pn-en", "norma", 
+            "ustawa", "k.p.", "kp", "paragraf", "§", "dyrektywa"
+        ],
+        "Instruktaż Ogólny": [
+            "instruktaż ogólny", "część i", "część 1"
+        ],
+        "Instruktaż Stanowiskowy": [
+            "instruktaż stanowiskowy", "część ii", "część 2"
+        ],
+        "Oświadczenia": [
+            "oświadczam", "podpis", "data szkolenia"
+        ]
+    }
+
+    wyniki = {}
+    
+    for kategoria, slowa_kluczowe in kryteria.items():
+        # Sprawdzamy czy którekolwiek słowo kluczowe występuje w tekście
+        znaleziono = any(slowo in tekst_lower for slowo in slowa_kluczowe)
+        wyniki[kategoria] = znaleziono
+        
+    return wyniki
 
 @st.cache_data
 def przypisz_godziny_do_tematow(_spis_tresci_lista):
