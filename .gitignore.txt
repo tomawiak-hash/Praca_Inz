@@ -1,0 +1,8 @@
+.streamlit/secrets.toml
+.streamlit/secrets.toml.txt
+
+__pycache__/
+*.pyc
+
+Ai_Key.txt
+*.key
